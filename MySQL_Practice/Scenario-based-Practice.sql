@@ -798,6 +798,417 @@ SELECT COUNT(*) AS No_of_rating
 FROM REVIEWS
 WHERE RATING >= 4.5;
 
+-- ----------------------------------------------------------------------------------------------------------------------------
+
+-- Q26)
+-- You have a table orders with a column order_date of type DATE. 
+-- Write a query to extract the year, month, and day from the order_date for each order.
+
+CREATE DATABASE practice_db_3;
+
+USE practice_db_3;
+
+CREATE TABLE ORDERS (
+	ORDER_ID INT PRIMARY KEY,
+    ORDER_DATE DATE NOT NULL
+);
+
+DESCRIBE ORDERS;
+
+INSERT INTO ORDERS VALUES
+(1, '2025-04-15'),
+(2, '2025-04-16');
+
+SELECT * FROM ORDERS; 
+
+SELECT ORDER_ID, ORDER_DATE, YEAR(ORDER_DATE) AS YEAR, MONTH(ORDER_DATE) AS MONTH, DAY(ORDER_DATE) AS DAY
+FROM ORDERS;
+
+-- -----------------------------------------------------------------------------------------------------------------------
+
+-- Q27)
+-- Consider a table employees with a column birth_date of type DATE. 
+-- Write a query to calculate the age of each employee based on their birth_date (using the current date).
+
+CREATE TABLE EMPLOYEES (
+	EMPLOYEE_ID INT PRIMARY KEY,
+    BIRTH_DATE DATE NOT NULL
+);
+
+INSERT INTO EMPLOYEES VALUES
+(101, '1990-05-12'),
+(102, '1985-11-23'),
+(103, '1992-03-30'),
+(104, '2000-08-15');
+
+SELECT * FROM EMPLOYEES;
+
+SELECT EMPLOYEE_ID, BIRTH_DATE, TIMESTAMPDIFF(YEAR, BIRTH_DATE, CURRENT_DATE)
+FROM EMPLOYEES;
+
+SELECT 
+EMPLOYEE_ID, 
+BIRTH_DATE, 
+CONCAT(TIMESTAMPDIFF(YEAR, BIRTH_DATE, CURRENT_DATE), " YEARS ", 
+MOD(TIMESTAMPDIFF(MONTH, BIRTH_DATE, CURRENT_DATE), 12), " MONTHS ", 
+DATEDIFF(
+      CURDATE(),
+      DATE_ADD(
+        DATE_ADD(BIRTH_DATE, INTERVAL TIMESTAMPDIFF(YEAR, BIRTH_DATE, CURDATE()) YEAR),
+        INTERVAL MOD(TIMESTAMPDIFF(MONTH, BIRTH_DATE, CURDATE()), 12) MONTH
+      )
+    ), ' DAYS') 
+AS AGE
+FROM EMPLOYEES;
+
+-- ---------------------------------------------------------------------------------------------------------------
+
+-- Q28)
+-- You have a table subscriptions with a column start_date of type DATE. 
+-- Write a query to add 30 days to the start_date for each subscription.
+
+CREATE TABLE SUBSCRIPTIONS (
+	SUBSCRIPTION_ID INT PRIMARY KEY,
+    START_DATE DATE NOT NULL
+);
+
+INSERT INTO SUBSCRIPTIONS (SUBSCRIPTION_ID, START_DATE) VALUES (1, '2023-01-15');
+INSERT INTO SUBSCRIPTIONS (SUBSCRIPTION_ID, START_DATE) VALUES (2, '2023-06-01');
+INSERT INTO SUBSCRIPTIONS (SUBSCRIPTION_ID, START_DATE) VALUES (3, '2024-02-10');
+INSERT INTO SUBSCRIPTIONS (SUBSCRIPTION_ID, START_DATE) VALUES (4, '2024-11-25');
+INSERT INTO SUBSCRIPTIONS (SUBSCRIPTION_ID, START_DATE) VALUES (5, '2025-03-05');
+
+SELECT * FROM SUBSCRIPTIONS; 
+
+SELECT SUBSCRIPTION_ID, START_DATE, DATE_ADD(START_DATE, INTERVAL 30 DAY) AS After_Month_Date
+FROM SUBSCRIPTIONS;
+
+-- -------------------------------------------------------------------------------------------------------
+
+-- Q29)
+-- Consider a table invoices with a column invoice_date of type DATE. 
+-- Write a query to return the last day of the month for each invoice_date.
+
+CREATE TABLE INVOICES (
+	ID INT PRIMARY KEY,
+    INVOICE_DATE DATE NOT NULL
+);
+
+INSERT INTO INVOICES (ID, INVOICE_DATE) VALUES (101, '2023-01-20');
+INSERT INTO INVOICES (ID, INVOICE_DATE) VALUES (102, '2023-07-05');
+INSERT INTO INVOICES (ID, INVOICE_DATE) VALUES (103, '2024-02-15');
+INSERT INTO INVOICES (ID, INVOICE_DATE) VALUES (104, '2024-12-01');
+INSERT INTO INVOICES (ID, INVOICE_DATE) VALUES (105, '2025-03-10');
+
+SELECT * FROM INVOICES;
+
+SELECT ID, INVOICE_DATE, LAST_DAY(INVOICE_DATE)
+FROM INVOICES;
+
+-- -------------------------------------------------------------------------------------------------------------
+
+-- Q30)
+-- You have a table tasks with a column due_date of type DATE. 
+-- Write a query to find all tasks that are due in the last 7 days from the current date.
+
+CREATE TABLE TASKS (
+	ID INT PRIMARY KEY,
+    DUE_DATE DATE NOT NULL
+);
+
+INSERT INTO TASKS (ID, DUE_DATE) VALUES (1, '2025-04-09');
+INSERT INTO TASKS (ID, DUE_DATE) VALUES (2, '2025-04-08');
+INSERT INTO TASKS (ID, DUE_DATE) VALUES (3, '2025-04-14');
+INSERT INTO TASKS (ID, DUE_DATE) VALUES (4, '2025-04-01');
+INSERT INTO TASKS (ID, DUE_DATE) VALUES (5, '2025-04-05');
+
+SELECT * FROM TASKS;
+
+SELECT *
+FROM TASKS
+WHERE DUE_DATE BETWEEN DATE_SUB(CURRENT_DATE(), INTERVAL 7 DAY) AND CURRENT_DATE(); 
+
+-- -----------------------------------------------------------------------------------------------------------------------------------
+
+-- Q31)
+-- You have a table events with a column event_date of type DATETIME. 
+-- Write a query to format the event_date in the format YYYY-MM-DD HH:MM:SS for each event.
+
+CREATE TABLE EVENTS (
+	ID INT PRIMARY KEY,
+    EVENT_DATE DATETIME NOT NULL
+);
+
+INSERT INTO EVENTS (ID, EVENT_DATE) VALUES (1, '2025-04-10 09:00:00');
+INSERT INTO EVENTS (ID, EVENT_DATE) VALUES (2, '2025-04-12 14:30:00');
+INSERT INTO EVENTS (ID, EVENT_DATE) VALUES (3, '2025-04-15 18:45:00');
+INSERT INTO EVENTS (ID, EVENT_DATE) VALUES (4, '2025-04-16 08:00:00');
+INSERT INTO EVENTS (ID, EVENT_DATE) VALUES (5, '2025-04-20 20:15:00');
+
+SELECT * FROM EVENTS;
+
+SELECT ID, EVENT_DATE, DATE_FORMAT(EVENT_DATE, "%Y-%m-%d %H:%i:%S") AS New_Datetime
+FROM EVENTS;
+
+-- -----------------------------------------------------------------------------------------------------
+
+-- Q32)
+-- Consider a table projects with columns start_date and end_date of type DATE. 
+-- Write a query to find the number of days between the start_date and end_date for each project.
+
+CREATE TABLE PROJECTS (
+	ID INT PRIMARY KEY,
+    START_DATE DATE NOT NULL,
+    END_DATE DATE NOT NULL    
+);
+
+INSERT INTO PROJECTS (ID, START_DATE, END_DATE) VALUES (1, '2024-01-15', '2024-06-30');
+INSERT INTO PROJECTS (ID, START_DATE, END_DATE) VALUES (2, '2024-07-01', '2024-12-31');
+INSERT INTO PROJECTS (ID, START_DATE, END_DATE) VALUES (3, '2025-01-10', '2025-03-15');
+INSERT INTO PROJECTS (ID, START_DATE, END_DATE) VALUES (4, '2025-02-01', '2025-04-30');
+INSERT INTO PROJECTS (ID, START_DATE, END_DATE) VALUES (5, '2025-04-01', '2025-09-30');
+
+SELECT * FROM PROJECTS;
+
+SELECT *, 
+DATEDIFF(END_DATE, START_DATE) AS No_of_days
+FROM PROJECTS;
+
+-- --------------------------------------------------------------------------------------------------
+
+-- Q33)
+-- You have a table meetings with a column meeting_date of type DATE. 
+-- Write a query to extract the day of the week (e.g., Monday, Tuesday, etc.) from the meeting_date.
+
+CREATE TABLE MEETINGS (
+	ID INT PRIMARY KEY,
+    MEETING_DATE DATE NOT NULL 
+);
+
+INSERT INTO MEETINGS (ID, MEETING_DATE) VALUES (1, '2025-04-10');
+INSERT INTO MEETINGS (ID, MEETING_DATE) VALUES (2, '2025-04-12');
+INSERT INTO MEETINGS (ID, MEETING_DATE) VALUES (3, '2025-04-15');
+INSERT INTO MEETINGS (ID, MEETING_DATE) VALUES (4, '2025-04-16');
+INSERT INTO MEETINGS (ID, MEETING_DATE) VALUES (5, '2025-04-20');
+
+SELECT * FROM MEETINGS;
+
+SELECT *,
+DAYNAME(MEETING_DATE) AS Dayname
+FROM MEETINGS;
+
+-- ------------------------------------------------------------------------------------------------------------
+
+-- Q34) 
+-- Consider a table sales with a column sale_date of type DATE. 
+-- Write a query to find all sales made in the current year.
+
+CREATE TABLE SALES (
+	ID INT PRIMARY KEY,
+    SALE_DATE DATE NOT NULL
+);
+
+INSERT INTO SALES (ID, SALE_DATE) VALUES (1, '2021-04-05');
+INSERT INTO SALES (ID, SALE_DATE) VALUES (2, '2017-04-23');
+INSERT INTO SALES (ID, SALE_DATE) VALUES (3, '2022-04-07');
+INSERT INTO SALES (ID, SALE_DATE) VALUES (4, '2023-04-10');
+INSERT INTO SALES (ID, SALE_DATE) VALUES (5, '2019-04-12');
+INSERT INTO SALES (ID, SALE_DATE) VALUES (6, '2017-04-15');
+INSERT INTO SALES (ID, SALE_DATE) VALUES (7, '2025-02-15');
+INSERT INTO SALES VALUES (8, '2025-01-20');
+
+SELECT * FROM SALES; 
+
+SELECT *
+FROM SALES
+WHERE YEAR(SALE_DATE) = YEAR(CURRENT_DATE);
+
+-- ----------------------------------------------------------------------------------------------
+
+-- Q35)
+-- You have a table subscriptions with a column renewal_date of type DATETIME. 
+-- Write a query to truncate the renewal_date to the first day of the month.
+
+CREATE TABLE SUBSCRIPTION (
+	ID INT PRIMARY KEY,
+    RENEWAL_DATE DATETIME NOT NULL
+);
+
+INSERT INTO SUBSCRIPTION (ID, RENEWAL_DATE) VALUES (1, '2025-04-01 10:00:00');
+INSERT INTO SUBSCRIPTION (ID, RENEWAL_DATE) VALUES (2, '2023-08-18 14:30:00');
+INSERT INTO SUBSCRIPTION (ID, RENEWAL_DATE) VALUES (3, '2024-11-03 09:15:00');
+INSERT INTO SUBSCRIPTION (ID, RENEWAL_DATE) VALUES (4, '2020-09-20 16:45:00');
+INSERT INTO SUBSCRIPTION (ID, RENEWAL_DATE) VALUES (5, '2025-01-28 08:00:00');
+
+SELECT * FROM SUBSCRIPTION;
+
+SELECT *,
+STR_TO_DATE(DATE_FORMAT(RENEWAL_DATE, "%Y-%m-%01 %00:%00:%00"), '%Y-%m-%d %H:%i:%S') AS First_day_of_Month
+FROM SUBSCRIPTION;
+
+-- ------------------------------------------------------------------------------------------------------------------
+
+-- Q36)
+-- You have a table projects with a column start_date of type DATE. 
+-- Write a query to return the week number for each project's start_date.
+
+SHOW TABLES;
+
+CREATE TABLE PROJECT (
+	ID INT PRIMARY KEY,
+    START_DATE DATE NOT NULL
+);
+
+INSERT INTO PROJECT VALUES (1, '2024-01-15');
+INSERT INTO PROJECT VALUES (2, '2024-07-01');
+INSERT INTO PROJECT VALUES (3, '2025-01-10');
+INSERT INTO PROJECT VALUES (4, '2025-02-01');
+INSERT INTO PROJECT VALUES (5, '2025-04-01');
+
+SELECT * FROM PROJECT;
+
+SELECT *,
+WEEK(START_DATE) AS Week_number,
+WEEKDAY(START_DATE) AS Week_day,
+WEEKOFYEAR(START_DATE) AS Week_of_year
+FROM PROJECT;
+
+-- ----------------------------------------------------------------------------------------------------------
+
+-- Q37)
+-- Consider a table events with a column event_date of type DATE. 
+-- Write a query to find all events that will occur in the next 30 days from the current date.
+
+CREATE TABLE EVENT (
+	ID INT PRIMARY KEY,
+    EVENT_DATE DATE NOT NULL
+);
+
+INSERT INTO EVENT (ID, EVENT_DATE) VALUES (6, '2025-04-18');
+INSERT INTO EVENT (ID, EVENT_DATE) VALUES (7, '2025-05-06');
+INSERT INTO EVENT (ID, EVENT_DATE) VALUES (8, '2025-05-24');
+INSERT INTO EVENT (ID, EVENT_DATE) VALUES (9, '2025-06-10');
+INSERT INTO EVENT (ID, EVENT_DATE) VALUES (10, '2025-05-15');
+
+SELECT * FROM EVENT;
+
+SELECT *
+FROM EVENT
+WHERE EVENT_DATE BETWEEN CURRENT_DATE() AND DATE_ADD(CURRENT_DATE, INTERVAL 30 DAY);
+
+-- -------------------------------------------------------------------------------------------------------------------------
+
+-- Q38)
+-- You have a table revenues with a column revenue_date of type DATE. 
+-- Write a query to return the quarter (e.g., Q1, Q2, Q3, Q4) for each revenue_date.
+
+CREATE TABLE REVENUES (
+	ID INT PRIMARY KEY,
+    REVENUE_DATE DATE NOT NULL
+);
+
+INSERT INTO REVENUES (ID, REVENUE_DATE) VALUES (1, '2025-01-15'); 
+INSERT INTO REVENUES (ID, REVENUE_DATE) VALUES (2, '2025-03-31'); 
+INSERT INTO REVENUES (ID, REVENUE_DATE) VALUES (3, '2025-04-01'); 
+INSERT INTO REVENUES (ID, REVENUE_DATE) VALUES (4, '2025-07-10'); 
+INSERT INTO REVENUES (ID, REVENUE_DATE) VALUES (5, '2025-11-20'); 
+
+SELECT * FROM REVENUES;
+
+SELECT *,
+CONCAT("Q", QUARTER(REVENUE_DATE)) AS Quarter
+FROM REVENUES;
+
+-- -----------------------------------------------------------------------------------------------------
+
+-- Q39)
+-- Consider a table appointments with columns appointment_date and completed_date, both of type DATE. 
+-- Write a query to find all appointments where the completed_date is later than the appointment_date.
+
+CREATE TABLE APPOINTMENTS (
+	ID INT PRIMARY KEY,
+    APPOINTMENT_DATE DATE NOT NULL,
+    COMPLETED_DATE DATE NOT NULL
+);
+
+INSERT INTO APPOINTMENTS (ID, APPOINTMENT_DATE, COMPLETED_DATE) VALUES (1, '2025-04-01', '2025-04-02');
+INSERT INTO APPOINTMENTS (ID, APPOINTMENT_DATE, COMPLETED_DATE) VALUES (2, '2025-03-28', '2025-01-30');
+INSERT INTO APPOINTMENTS (ID, APPOINTMENT_DATE, COMPLETED_DATE) VALUES (3, '2025-04-10', '2025-04-12');
+INSERT INTO APPOINTMENTS (ID, APPOINTMENT_DATE, COMPLETED_DATE) VALUES (4, '2025-04-05', '2025-04-07');
+INSERT INTO APPOINTMENTS (ID, APPOINTMENT_DATE, COMPLETED_DATE) VALUES (5, '2025-04-15', '2025-02-16');
+
+
+SELECT * FROM APPOINTMENTS;
+
+SELECT *
+FROM APPOINTMENTS 
+WHERE APPOINTMENT_DATE < COMPLETED_DATE;
+
+-- ---------------------------------------------------------------------------------------------------------------------
+
+-- Q40)
+-- You have a table events with a column event_date of type DATE. 
+-- Write a query to find all events that occur on the weekend (Saturday or Sunday).
+
+CREATE TABLE EVENTS_new (
+	ID INT PRIMARY KEY,
+    EVENT_DATE DATE NOT NULL
+);
+
+
+INSERT INTO EVENTS_new (ID, EVENT_DATE) VALUES (1, '2025-04-08'); 
+INSERT INTO EVENTS_new (ID, EVENT_DATE) VALUES (2, '2025-04-13'); 
+INSERT INTO EVENTS_new (ID, EVENT_DATE) VALUES (3, '2025-04-14'); 
+INSERT INTO EVENTS_new (ID, EVENT_DATE) VALUES (4, '2025-04-20'); 
+INSERT INTO EVENTS_new (ID, EVENT_DATE) VALUES (5, '2025-04-26');
+
+SELECT * FROM EVENTS_new;
+
+SELECT *,
+DAYNAME(EVENT_DATE) AS Dayname
+FROM EVENTS_new
+WHERE DAYNAME(EVENT_DATE) IN ('SATURDAY', 'SUNDAY');
+
+-- -----------------------------------------------------------------------------------------------
+
+-- Q41)
+-- You have a table projects with a column project_date of type DATE. 
+-- Write a query to find the first day of the year for each project's project_date.
+
+CREATE TABLE PROJECTS_new (
+	ID INT PRIMARY KEY,
+    PROJECT_DATE DATE NOT NULL
+);
+
+INSERT INTO PROJECTS_new (ID, PROJECT_DATE) VALUES (1, '2021-05-10');
+INSERT INTO PROJECTS_new (ID, PROJECT_DATE) VALUES (2, '2022-08-25');
+INSERT INTO PROJECTS_new (ID, PROJECT_DATE) VALUES (3, '2023-02-14');
+INSERT INTO PROJECTS_new (ID, PROJECT_DATE) VALUES (4, '2024-11-30');
+INSERT INTO PROJECTS_new (ID, PROJECT_DATE) VALUES (5, '2025-04-16');
+
+SELECT * FROM PROJECTS_new;
+
+SELECT *,
+CONCAT(YEAR(PROJECT_DATE), '-01-01') AS First_Day_Of_Year,
+DAYNAME(STR_TO_DATE(CONCAT(YEAR(PROJECT_DATE), '-01-01'), '%Y-%m-%d')) AS Dayname_of_the_first_day_of_the_year
+FROM PROJECTS_new;
+
+-- --------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
